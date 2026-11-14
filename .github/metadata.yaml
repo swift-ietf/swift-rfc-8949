@@ -1,0 +1,11 @@
+# .github/metadata.yaml
+description: "Swift implementation of RFC 8949: Concise Binary Object Representation (CBOR)."
+topics:
+  - standards
+  - rfc
+  - rfc-8949
+  - cbor
+  - serialization
+homepage: "https://swift-institute.org"
+readme:
+  family: E
