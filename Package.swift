@@ -12,7 +12,7 @@ let package = Package(
         .visionOS(.v27),
     ],
     products: [
-        .library(name: "RFC 8949", targets: ["RFC 8949"]),
+        .library(name: "RFC 8949", targets: ["RFC 8949"])
     ],
     dependencies: [],
     targets: [
@@ -23,7 +23,7 @@ let package = Package(
         .testTarget(
             name: "RFC 8949 Tests",
             dependencies: [
-                .target(name: "RFC 8949"),
+                .target(name: "RFC 8949")
             ]
         ),
     ],

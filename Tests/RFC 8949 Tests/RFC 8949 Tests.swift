@@ -1,6 +1,5 @@
-import Testing
-
 import RFC_8949
+import Testing
 
 @Suite
 struct `RFC 8949 Tests` {
@@ -25,11 +24,11 @@ struct `RFC 8949 Tests` {
         Vector(hex: "1819", expected: .unsigned(25), roundtrip: true),
         Vector(hex: "1864", expected: .unsigned(100), roundtrip: true),
         Vector(hex: "1903e8", expected: .unsigned(1000), roundtrip: true),
-        Vector(hex: "1a000f4240", expected: .unsigned(1000000), roundtrip: true),
-        Vector(hex: "1b000000e8d4a51000", expected: .unsigned(1000000000000), roundtrip: true),
-        Vector(hex: "1bffffffffffffffff", expected: .unsigned(18446744073709551615), roundtrip: true),
+        Vector(hex: "1a000f4240", expected: .unsigned(1_000_000), roundtrip: true),
+        Vector(hex: "1b000000e8d4a51000", expected: .unsigned(1_000_000_000_000), roundtrip: true),
+        Vector(hex: "1bffffffffffffffff", expected: .unsigned(18_446_744_073_709_551_615), roundtrip: true),
         Vector(hex: "c249010000000000000000", expected: .tagged(2, .bytes([0x01, 0, 0, 0, 0, 0, 0, 0, 0])), roundtrip: true),
-        Vector(hex: "3bffffffffffffffff", expected: .negative(18446744073709551615), roundtrip: true),
+        Vector(hex: "3bffffffffffffffff", expected: .negative(18_446_744_073_709_551_615), roundtrip: true),
         Vector(hex: "c349010000000000000000", expected: .tagged(3, .bytes([0x01, 0, 0, 0, 0, 0, 0, 0, 0])), roundtrip: true),
         Vector(hex: "20", expected: .negative(0), roundtrip: true),
         Vector(hex: "29", expected: .negative(9), roundtrip: true),
@@ -64,7 +63,7 @@ struct `RFC 8949 Tests` {
         Vector(hex: "f0", expected: .simple(16), roundtrip: true),
         Vector(hex: "f8ff", expected: .simple(255), roundtrip: true),
         Vector(hex: "c074323031332d30332d32315432303a30343a30305a", expected: .tagged(0, .text("2013-03-21T20:04:00Z")), roundtrip: true),
-        Vector(hex: "c11a514b67b0", expected: .tagged(1, .unsigned(1363896240)), roundtrip: true),
+        Vector(hex: "c11a514b67b0", expected: .tagged(1, .unsigned(1_363_896_240)), roundtrip: true),
         Vector(hex: "c1fb41d452d9ec200000", expected: .tagged(1, .float(1363896240.5)), roundtrip: true),
         Vector(hex: "d74401020304", expected: .tagged(23, .bytes([0x01, 0x02, 0x03, 0x04])), roundtrip: true),
         Vector(hex: "d818456449455446", expected: .tagged(24, .bytes([0x64, 0x49, 0x45, 0x54, 0x46])), roundtrip: true),
@@ -81,12 +80,27 @@ struct `RFC 8949 Tests` {
         Vector(hex: "80", expected: .array([]), roundtrip: true),
         Vector(hex: "83010203", expected: .array([.unsigned(1), .unsigned(2), .unsigned(3)]), roundtrip: true),
         Vector(hex: "8301820203820405", expected: .array([.unsigned(1), .array([.unsigned(2), .unsigned(3)]), .array([.unsigned(4), .unsigned(5)])]), roundtrip: true),
-        Vector(hex: "98190102030405060708090a0b0c0d0e0f101112131415161718181819", expected: .array([.unsigned(1), .unsigned(2), .unsigned(3), .unsigned(4), .unsigned(5), .unsigned(6), .unsigned(7), .unsigned(8), .unsigned(9), .unsigned(10), .unsigned(11), .unsigned(12), .unsigned(13), .unsigned(14), .unsigned(15), .unsigned(16), .unsigned(17), .unsigned(18), .unsigned(19), .unsigned(20), .unsigned(21), .unsigned(22), .unsigned(23), .unsigned(24), .unsigned(25)]), roundtrip: true),
+        Vector(
+            hex: "98190102030405060708090a0b0c0d0e0f101112131415161718181819",
+            expected: .array([
+                .unsigned(1), .unsigned(2), .unsigned(3), .unsigned(4), .unsigned(5), .unsigned(6), .unsigned(7), .unsigned(8), .unsigned(9), .unsigned(10), .unsigned(11), .unsigned(12),
+                .unsigned(13), .unsigned(14), .unsigned(15), .unsigned(16), .unsigned(17), .unsigned(18), .unsigned(19), .unsigned(20), .unsigned(21), .unsigned(22), .unsigned(23), .unsigned(24),
+                .unsigned(25),
+            ]),
+            roundtrip: true
+        ),
         Vector(hex: "a0", expected: .map([]), roundtrip: true),
         Vector(hex: "a201020304", expected: .map([.init(key: .unsigned(1), value: .unsigned(2)), .init(key: .unsigned(3), value: .unsigned(4))]), roundtrip: true),
         Vector(hex: "a26161016162820203", expected: .map([.init(key: .text("a"), value: .unsigned(1)), .init(key: .text("b"), value: .array([.unsigned(2), .unsigned(3)]))]), roundtrip: true),
         Vector(hex: "826161a161626163", expected: .array([.text("a"), .map([.init(key: .text("b"), value: .text("c"))])]), roundtrip: true),
-        Vector(hex: "a56161614161626142616361436164614461656145", expected: .map([.init(key: .text("a"), value: .text("A")), .init(key: .text("b"), value: .text("B")), .init(key: .text("c"), value: .text("C")), .init(key: .text("d"), value: .text("D")), .init(key: .text("e"), value: .text("E"))]), roundtrip: true),
+        Vector(
+            hex: "a56161614161626142616361436164614461656145",
+            expected: .map([
+                .init(key: .text("a"), value: .text("A")), .init(key: .text("b"), value: .text("B")), .init(key: .text("c"), value: .text("C")), .init(key: .text("d"), value: .text("D")),
+                .init(key: .text("e"), value: .text("E")),
+            ]),
+            roundtrip: true
+        ),
         Vector(hex: "5f42010243030405ff", expected: .bytes([0x01, 0x02, 0x03, 0x04, 0x05]), roundtrip: false),
         Vector(hex: "7f657374726561646d696e67ff", expected: .text("streaming"), roundtrip: false),
         Vector(hex: "9fff", expected: .array([]), roundtrip: false),
@@ -94,7 +108,15 @@ struct `RFC 8949 Tests` {
         Vector(hex: "9f01820203820405ff", expected: .array([.unsigned(1), .array([.unsigned(2), .unsigned(3)]), .array([.unsigned(4), .unsigned(5)])]), roundtrip: false),
         Vector(hex: "83018202039f0405ff", expected: .array([.unsigned(1), .array([.unsigned(2), .unsigned(3)]), .array([.unsigned(4), .unsigned(5)])]), roundtrip: false),
         Vector(hex: "83019f0203ff820405", expected: .array([.unsigned(1), .array([.unsigned(2), .unsigned(3)]), .array([.unsigned(4), .unsigned(5)])]), roundtrip: false),
-        Vector(hex: "9f0102030405060708090a0b0c0d0e0f101112131415161718181819ff", expected: .array([.unsigned(1), .unsigned(2), .unsigned(3), .unsigned(4), .unsigned(5), .unsigned(6), .unsigned(7), .unsigned(8), .unsigned(9), .unsigned(10), .unsigned(11), .unsigned(12), .unsigned(13), .unsigned(14), .unsigned(15), .unsigned(16), .unsigned(17), .unsigned(18), .unsigned(19), .unsigned(20), .unsigned(21), .unsigned(22), .unsigned(23), .unsigned(24), .unsigned(25)]), roundtrip: false),
+        Vector(
+            hex: "9f0102030405060708090a0b0c0d0e0f101112131415161718181819ff",
+            expected: .array([
+                .unsigned(1), .unsigned(2), .unsigned(3), .unsigned(4), .unsigned(5), .unsigned(6), .unsigned(7), .unsigned(8), .unsigned(9), .unsigned(10), .unsigned(11), .unsigned(12),
+                .unsigned(13), .unsigned(14), .unsigned(15), .unsigned(16), .unsigned(17), .unsigned(18), .unsigned(19), .unsigned(20), .unsigned(21), .unsigned(22), .unsigned(23), .unsigned(24),
+                .unsigned(25),
+            ]),
+            roundtrip: false
+        ),
         Vector(hex: "bf61610161629f0203ffff", expected: .map([.init(key: .text("a"), value: .unsigned(1)), .init(key: .text("b"), value: .array([.unsigned(2), .unsigned(3)]))]), roundtrip: false),
         Vector(hex: "826161bf61626163ff", expected: .array([.text("a"), .map([.init(key: .text("b"), value: .text("c"))])]), roundtrip: false),
         Vector(hex: "bf6346756ef563416d7421ff", expected: .map([.init(key: .text("Fun"), value: .bool(true)), .init(key: .text("Amt"), value: .negative(1))]), roundtrip: false),

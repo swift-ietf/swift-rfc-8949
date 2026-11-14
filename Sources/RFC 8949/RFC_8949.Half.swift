@@ -16,8 +16,8 @@ extension RFC_8949.Half {
             return Double(sign: sign, exponent: -24, significand: mantissa)
         case 31:
             guard half & 0x3ff == 0 else {
-                // Keep the payload: a half NaN's ten bits become the top bits of a double's 52.
-                let bits: UInt64 = (sign == .minus ? 1 << 63 : 0) | 0x7ff0_0000_0000_0000
+                let bits: UInt64 =
+                    (sign == .minus ? 1 << 63 : 0) | 0x7ff0_0000_0000_0000
                     | UInt64(half & 0x3ff) << 42
                 return Double(bitPattern: bits)
             }

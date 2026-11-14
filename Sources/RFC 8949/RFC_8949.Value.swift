@@ -117,18 +117,39 @@ extension RFC_8949.Value: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         switch self {
-        case .unsigned(let n): hasher.combine(0); hasher.combine(n)
-        case .negative(let n): hasher.combine(1); hasher.combine(n)
-        case .bytes(let b): hasher.combine(2); hasher.combine(b)
-        case .text(let t): hasher.combine(3); hasher.combine(t)
-        case .array(let items): hasher.combine(4); hasher.combine(items)
-        case .map(let pairs): hasher.combine(5); hasher.combine(pairs)
-        case .tagged(let tag, let item): hasher.combine(6); hasher.combine(tag); hasher.combine(item)
-        case .bool(let b): hasher.combine(7); hasher.combine(b)
+        case .unsigned(let n):
+            hasher.combine(0)
+            hasher.combine(n)
+        case .negative(let n):
+            hasher.combine(1)
+            hasher.combine(n)
+        case .bytes(let b):
+            hasher.combine(2)
+            hasher.combine(b)
+        case .text(let t):
+            hasher.combine(3)
+            hasher.combine(t)
+        case .array(let items):
+            hasher.combine(4)
+            hasher.combine(items)
+        case .map(let pairs):
+            hasher.combine(5)
+            hasher.combine(pairs)
+        case .tagged(let tag, let item):
+            hasher.combine(6)
+            hasher.combine(tag)
+            hasher.combine(item)
+        case .bool(let b):
+            hasher.combine(7)
+            hasher.combine(b)
         case .null: hasher.combine(8)
         case .undefined: hasher.combine(9)
-        case .simple(let s): hasher.combine(10); hasher.combine(s)
-        case .float(let f): hasher.combine(11); hasher.combine(f.bitPattern)
+        case .simple(let s):
+            hasher.combine(10)
+            hasher.combine(s)
+        case .float(let f):
+            hasher.combine(11)
+            hasher.combine(f.bitPattern)
         }
     }
 }

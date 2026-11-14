@@ -171,7 +171,6 @@ extension RFC_8949.Decoder {
             case 4:
                 guard depth < maximumDepth else { throw .depth(at: start) }
                 let count = try length(argument, at: start)
-                // Every item takes at least one byte, so a count beyond the remaining bytes is truncated.
                 guard count <= bytes.count - cursor else { throw .truncated(at: bytes.count) }
                 var items: [RFC_8949.Value] = []
                 items.reserveCapacity(count)
