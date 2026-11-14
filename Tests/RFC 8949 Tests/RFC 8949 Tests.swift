@@ -14,7 +14,8 @@ struct `RFC 8949 Tests` {
         var testDescription: String { hex }
     }
 
-    /// Appendix A, as published in the machine-readable form at github.com/cbor/test-vectors.
+    /// Appendix A, as published in the machine-readable form at github.com/cbor/test-vectors, less 0xf818
+    /// (simple(24)): that file follows RFC 7049, and RFC 8949 section 3.3 makes the item not well-formed.
     static let appendixA: [Vector] = [
         Vector(hex: "00", expected: .unsigned(0), roundtrip: true),
         Vector(hex: "01", expected: .unsigned(1), roundtrip: true),
@@ -61,7 +62,6 @@ struct `RFC 8949 Tests` {
         Vector(hex: "f6", expected: .null, roundtrip: true),
         Vector(hex: "f7", expected: .undefined, roundtrip: true),
         Vector(hex: "f0", expected: .simple(16), roundtrip: true),
-        Vector(hex: "f818", expected: .simple(24), roundtrip: true),
         Vector(hex: "f8ff", expected: .simple(255), roundtrip: true),
         Vector(hex: "c074323031332d30332d32315432303a30343a30305a", expected: .tagged(0, .text("2013-03-21T20:04:00Z")), roundtrip: true),
         Vector(hex: "c11a514b67b0", expected: .tagged(1, .unsigned(1363896240)), roundtrip: true),
@@ -137,6 +137,7 @@ struct `RFC 8949 Tests` {
         ("5f5f4000ffff", .invalidChunk(at: 1)),
         ("f800", .invalidSimple(0, at: 0)),
         ("f81f", .invalidSimple(31, at: 0)),
+        ("f818", .invalidSimple(24, at: 0)),
         ("62c328", .invalidUTF8(at: 0)),
         ("a201020103", .duplicateKey(at: 3)),
         ("0000", .trailingBytes(at: 1)),
