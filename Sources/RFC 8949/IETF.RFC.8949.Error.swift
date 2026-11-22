@@ -1,4 +1,4 @@
-extension RFC_8949 {
+extension IETF.RFC.`8949` {
 
     /// Why bytes are not one well-formed, valid CBOR data item.
     public enum Error: Swift.Error, Sendable, Equatable {

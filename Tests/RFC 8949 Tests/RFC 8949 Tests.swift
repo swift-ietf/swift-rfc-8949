@@ -7,7 +7,7 @@ struct `RFC 8949 Tests` {
     struct Vector: Sendable, CustomTestStringConvertible {
         let hex: String
         /// `nil` for a NaN, which is checked with `isNaN`.
-        let expected: RFC_8949.Value?
+        let expected: IETF.RFC.`8949`.Value?
         let roundtrip: Bool
 
         var testDescription: String { hex }
@@ -124,7 +124,7 @@ struct `RFC 8949 Tests` {
 
     @Test(arguments: appendixA)
     func `Appendix A decodes`(_ vector: Vector) throws {
-        let value = try RFC_8949.decode(hex(vector.hex))
+        let value = try IETF.RFC.`8949`.decode(hex(vector.hex))
         if let expected = vector.expected {
             #expect(value == expected)
         } else {
@@ -139,11 +139,11 @@ struct `RFC 8949 Tests` {
     @Test(arguments: appendixA.filter(\.roundtrip))
     func `Appendix A encodes in preferred serialization`(_ vector: Vector) {
         let value = vector.expected ?? .float(.nan)
-        #expect(RFC_8949.encode(value) == hex(vector.hex))
+        #expect(IETF.RFC.`8949`.encode(value) == hex(vector.hex))
     }
 
     @Test(arguments: [
-        ("18", RFC_8949.Error.truncated(at: 1)),
+        ("18", IETF.RFC.`8949`.Error.truncated(at: 1)),
         ("1901", .truncated(at: 2)),
         ("44010203", .truncated(at: 4)),
         ("8301", .truncated(at: 2)),
@@ -165,68 +165,68 @@ struct `RFC 8949 Tests` {
         ("0000", .trailingBytes(at: 1)),
         ("9f01", .truncated(at: 2)),
     ])
-    func `bytes that are not one well-formed, valid item are refused`(_ input: String, _ error: RFC_8949.Error) {
-        #expect(throws: error) { try RFC_8949.decode(hex(input)) }
+    func `bytes that are not one well-formed, valid item are refused`(_ input: String, _ error: IETF.RFC.`8949`.Error) {
+        #expect(throws: error) { try IETF.RFC.`8949`.decode(hex(input)) }
     }
 
     @Test
     func `nesting deeper than the maximum depth is refused`() throws {
         let nested = [UInt8](repeating: 0x81, count: 64) + [0x00]
-        #expect(throws: Never.self) { try RFC_8949.decode(nested) }
-        #expect(throws: RFC_8949.Error.depth(at: 64)) { try RFC_8949.decode([0x81] + nested) }
-        #expect(throws: RFC_8949.Error.depth(at: 2)) { try RFC_8949.decode(nested, maximumDepth: 2) }
+        #expect(throws: Never.self) { try IETF.RFC.`8949`.decode(nested) }
+        #expect(throws: IETF.RFC.`8949`.Error.depth(at: 64)) { try IETF.RFC.`8949`.decode([0x81] + nested) }
+        #expect(throws: IETF.RFC.`8949`.Error.depth(at: 2)) { try IETF.RFC.`8949`.decode(nested, maximumDepth: 2) }
     }
 
     @Test
     func `a length beyond the input is refused before anything is allocated`() {
-        #expect(throws: RFC_8949.Error.truncated(at: 9)) { try RFC_8949.decode(hex("9b7fffffffffffffff")) }
-        #expect(throws: RFC_8949.Error.truncated(at: 9)) { try RFC_8949.decode(hex("5b7fffffffffffffff")) }
-        #expect(throws: RFC_8949.Error.truncated(at: 9)) { try RFC_8949.decode(hex("bb7fffffffffffffff")) }
-        #expect(throws: RFC_8949.Error.length(at: 0)) { try RFC_8949.decode(hex("9bffffffffffffffff")) }
+        #expect(throws: IETF.RFC.`8949`.Error.truncated(at: 9)) { try IETF.RFC.`8949`.decode(hex("9b7fffffffffffffff")) }
+        #expect(throws: IETF.RFC.`8949`.Error.truncated(at: 9)) { try IETF.RFC.`8949`.decode(hex("5b7fffffffffffffff")) }
+        #expect(throws: IETF.RFC.`8949`.Error.truncated(at: 9)) { try IETF.RFC.`8949`.decode(hex("bb7fffffffffffffff")) }
+        #expect(throws: IETF.RFC.`8949`.Error.length(at: 0)) { try IETF.RFC.`8949`.decode(hex("9bffffffffffffffff")) }
     }
 
     @Test
     func `the decoder reads items one after another`() throws {
-        var decoder = RFC_8949.Decoder(hex("a1010243010203f6"))
+        var decoder = IETF.RFC.`8949`.Decoder(hex("a1010243010203f6"))
         #expect(try decoder.decode() == [1: 2])
         #expect(decoder.position == 3)
         #expect(try decoder.decode() == .bytes([1, 2, 3]))
         #expect(try decoder.decode() == .null)
         #expect(decoder.isAtEnd)
-        #expect(throws: RFC_8949.Error.truncated(at: 8)) { try decoder.decode() }
+        #expect(throws: IETF.RFC.`8949`.Error.truncated(at: 8)) { try decoder.decode() }
         #expect(decoder.position == 8)
     }
 
     @Test
     func `deterministic encoding sorts map keys by their encoded bytes`() {
-        let value: RFC_8949.Value = ["b": 1, "a": 2, 10: 3, -1: 4, 100: 5]
-        #expect(RFC_8949.encode(value, serialization: .deterministic) == hex("a50a031864052004616102616201"))
-        #expect(RFC_8949.encode(value) == hex("a561620161610" + "20a0320041864" + "05"))
+        let value: IETF.RFC.`8949`.Value = ["b": 1, "a": 2, 10: 3, -1: 4, 100: 5]
+        #expect(IETF.RFC.`8949`.encode(value, serialization: .deterministic) == hex("a50a031864052004616102616201"))
+        #expect(IETF.RFC.`8949`.encode(value) == hex("a561620161610" + "20a0320041864" + "05"))
     }
 
     @Test
     func `floats take the shortest width that keeps their value`() {
-        #expect(RFC_8949.encode(.float(0.5)) == hex("f93800"))
-        #expect(RFC_8949.encode(.float(65505)) == hex("fa477fe100"))
-        #expect(RFC_8949.encode(.float(-0.0)) == hex("f98000"))
-        #expect(RFC_8949.encode(.float(0x1p-24)) == hex("f90001"))
-        #expect(RFC_8949.encode(.float(0x1p-25)) == hex("fa33000000"))
-        #expect(RFC_8949.encode(.float(Double(Float.leastNonzeroMagnitude))) == hex("fa00000001"))
-        #expect(RFC_8949.encode(.float(.greatestFiniteMagnitude)) == hex("fb7fefffffffffffff"))
+        #expect(IETF.RFC.`8949`.encode(.float(0.5)) == hex("f93800"))
+        #expect(IETF.RFC.`8949`.encode(.float(65505)) == hex("fa477fe100"))
+        #expect(IETF.RFC.`8949`.encode(.float(-0.0)) == hex("f98000"))
+        #expect(IETF.RFC.`8949`.encode(.float(0x1p-24)) == hex("f90001"))
+        #expect(IETF.RFC.`8949`.encode(.float(0x1p-25)) == hex("fa33000000"))
+        #expect(IETF.RFC.`8949`.encode(.float(Double(Float.leastNonzeroMagnitude))) == hex("fa00000001"))
+        #expect(IETF.RFC.`8949`.encode(.float(.greatestFiniteMagnitude)) == hex("fb7fefffffffffffff"))
     }
 
     @Test
     func `integers cover the full range of both major types`() {
-        #expect(RFC_8949.Value(Int64.min) == .negative(UInt64(Int64.max)))
-        #expect(RFC_8949.Value(Int64.min).integer == Int64.min)
-        #expect(RFC_8949.Value.negative(UInt64(Int64.max) + 1).integer == nil)
-        #expect(RFC_8949.Value.unsigned(.max).integer == nil)
-        #expect(RFC_8949.Value(-500).integer == -500)
+        #expect(IETF.RFC.`8949`.Value(Int64.min) == .negative(UInt64(Int64.max)))
+        #expect(IETF.RFC.`8949`.Value(Int64.min).integer == Int64.min)
+        #expect(IETF.RFC.`8949`.Value.negative(UInt64(Int64.max) + 1).integer == nil)
+        #expect(IETF.RFC.`8949`.Value.unsigned(.max).integer == nil)
+        #expect(IETF.RFC.`8949`.Value(-500).integer == -500)
     }
 
     @Test
     func `a map is looked up by key`() throws {
-        let value = try RFC_8949.decode(hex("a2616101616282020" + "3"))
+        let value = try IETF.RFC.`8949`.decode(hex("a2616101616282020" + "3"))
         #expect(value["a"] == 1)
         #expect(value["b"] == [2, 3])
         #expect(value["c"] == nil)

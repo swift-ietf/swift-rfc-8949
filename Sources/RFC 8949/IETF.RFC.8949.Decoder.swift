@@ -1,4 +1,4 @@
-extension RFC_8949 {
+extension IETF.RFC.`8949` {
 
     /// Reads CBOR data items one after another from a byte buffer.
     ///
@@ -28,10 +28,10 @@ extension RFC_8949 {
     }
 }
 
-extension RFC_8949 {
+extension IETF.RFC.`8949` {
 
     /// The one data item `bytes` holds, with nothing after it.
-    public static func decode(_ bytes: [UInt8], maximumDepth: Int = 64) throws(RFC_8949.Error) -> Value {
+    public static func decode(_ bytes: [UInt8], maximumDepth: Int = 64) throws(IETF.RFC.`8949`.Error) -> Value {
         var decoder = Decoder(bytes, maximumDepth: maximumDepth)
         let value = try decoder.decode()
         guard decoder.isAtEnd else { throw .trailingBytes(at: decoder.position) }
@@ -39,12 +39,12 @@ extension RFC_8949 {
     }
 }
 
-extension RFC_8949.Decoder {
+extension IETF.RFC.`8949`.Decoder {
 
     /// The next data item; `position` moves past it.
     ///
     /// When it throws, `position` is unchanged.
-    public mutating func decode() throws(RFC_8949.Error) -> RFC_8949.Value {
+    public mutating func decode() throws(IETF.RFC.`8949`.Error) -> IETF.RFC.`8949`.Value {
         var cursor = position
         let value = try item(at: &cursor, depth: 0)
         position = cursor
@@ -52,7 +52,7 @@ extension RFC_8949.Decoder {
     }
 }
 
-extension RFC_8949.Decoder {
+extension IETF.RFC.`8949`.Decoder {
 
     private enum Head {
         case definite(major: UInt8, argument: UInt64)
@@ -60,13 +60,13 @@ extension RFC_8949.Decoder {
         case stop
     }
 
-    private func byte(at cursor: inout Int) throws(RFC_8949.Error) -> UInt8 {
+    private func byte(at cursor: inout Int) throws(IETF.RFC.`8949`.Error) -> UInt8 {
         guard cursor < bytes.count else { throw .truncated(at: cursor) }
         defer { cursor += 1 }
         return bytes[cursor]
     }
 
-    private func head(at cursor: inout Int) throws(RFC_8949.Error) -> Head {
+    private func head(at cursor: inout Int) throws(IETF.RFC.`8949`.Error) -> Head {
         let start = cursor
         let initial = try byte(at: &cursor)
         let major = initial >> 5
@@ -96,23 +96,23 @@ extension RFC_8949.Decoder {
         }
     }
 
-    private func length(_ argument: UInt64, at start: Int) throws(RFC_8949.Error) -> Int {
+    private func length(_ argument: UInt64, at start: Int) throws(IETF.RFC.`8949`.Error) -> Int {
         guard argument <= UInt64(Int.max) else { throw .length(at: start) }
         return Int(argument)
     }
 
-    private func content(_ count: Int, at cursor: inout Int) throws(RFC_8949.Error) -> ArraySlice<UInt8> {
+    private func content(_ count: Int, at cursor: inout Int) throws(IETF.RFC.`8949`.Error) -> ArraySlice<UInt8> {
         guard bytes.count - cursor >= count else { throw .truncated(at: bytes.count) }
         defer { cursor += count }
         return bytes[cursor..<(cursor + count)]
     }
 
-    private func text(_ slice: ArraySlice<UInt8>, at start: Int) throws(RFC_8949.Error) -> String {
+    private func text(_ slice: ArraySlice<UInt8>, at start: Int) throws(IETF.RFC.`8949`.Error) -> String {
         guard let text = String(validating: slice, as: UTF8.self) else { throw .invalidUTF8(at: start) }
         return text
     }
 
-    private func item(at cursor: inout Int, depth: Int) throws(RFC_8949.Error) -> RFC_8949.Value {
+    private func item(at cursor: inout Int, depth: Int) throws(IETF.RFC.`8949`.Error) -> IETF.RFC.`8949`.Value {
         let start = cursor
         switch try head(at: &cursor) {
         case .stop:
@@ -137,7 +137,7 @@ extension RFC_8949.Decoder {
 
             case 4:
                 guard depth < maximumDepth else { throw .depth(at: start) }
-                var items: [RFC_8949.Value] = []
+                var items: [IETF.RFC.`8949`.Value] = []
                 while true {
                     if try isBreak(at: &cursor) { break }
                     items.append(try item(at: &cursor, depth: depth + 1))
@@ -146,14 +146,14 @@ extension RFC_8949.Decoder {
 
             default:
                 guard depth < maximumDepth else { throw .depth(at: start) }
-                var pairs: [RFC_8949.Pair] = []
-                var keys: Set<RFC_8949.Value> = []
+                var pairs: [IETF.RFC.`8949`.Pair] = []
+                var keys: Set<IETF.RFC.`8949`.Value> = []
                 while true {
                     if try isBreak(at: &cursor) { break }
                     let keyStart = cursor
                     let key = try item(at: &cursor, depth: depth + 1)
                     guard keys.insert(key).inserted else { throw .duplicateKey(at: keyStart) }
-                    pairs.append(RFC_8949.Pair(key: key, value: try item(at: &cursor, depth: depth + 1)))
+                    pairs.append(IETF.RFC.`8949`.Pair(key: key, value: try item(at: &cursor, depth: depth + 1)))
                 }
                 return .map(pairs)
             }
@@ -172,7 +172,7 @@ extension RFC_8949.Decoder {
                 guard depth < maximumDepth else { throw .depth(at: start) }
                 let count = try length(argument, at: start)
                 guard count <= bytes.count - cursor else { throw .truncated(at: bytes.count) }
-                var items: [RFC_8949.Value] = []
+                var items: [IETF.RFC.`8949`.Value] = []
                 items.reserveCapacity(count)
                 for _ in 0..<count {
                     items.append(try item(at: &cursor, depth: depth + 1))
@@ -182,14 +182,14 @@ extension RFC_8949.Decoder {
                 guard depth < maximumDepth else { throw .depth(at: start) }
                 let count = try length(argument, at: start)
                 guard count <= (bytes.count - cursor) / 2 else { throw .truncated(at: bytes.count) }
-                var pairs: [RFC_8949.Pair] = []
+                var pairs: [IETF.RFC.`8949`.Pair] = []
                 pairs.reserveCapacity(count)
-                var keys: Set<RFC_8949.Value> = []
+                var keys: Set<IETF.RFC.`8949`.Value> = []
                 for _ in 0..<count {
                     let keyStart = cursor
                     let key = try item(at: &cursor, depth: depth + 1)
                     guard keys.insert(key).inserted else { throw .duplicateKey(at: keyStart) }
-                    pairs.append(RFC_8949.Pair(key: key, value: try item(at: &cursor, depth: depth + 1)))
+                    pairs.append(IETF.RFC.`8949`.Pair(key: key, value: try item(at: &cursor, depth: depth + 1)))
                 }
                 return .map(pairs)
             case 6:
@@ -198,7 +198,7 @@ extension RFC_8949.Decoder {
             default:
                 let info = bytes[start] & 0x1f
                 switch info {
-                case 25: return .float(RFC_8949.Half.double(UInt16(argument)))
+                case 25: return .float(IETF.RFC.`8949`.Half.double(UInt16(argument)))
                 case 26: return .float(Double(Float(bitPattern: UInt32(argument))))
                 case 27: return .float(Double(bitPattern: argument))
                 default:
@@ -215,7 +215,7 @@ extension RFC_8949.Decoder {
     }
 
     /// Whether the next byte is a break code, consuming it when it is.
-    private func isBreak(at cursor: inout Int) throws(RFC_8949.Error) -> Bool {
+    private func isBreak(at cursor: inout Int) throws(IETF.RFC.`8949`.Error) -> Bool {
         guard cursor < bytes.count else { throw .truncated(at: cursor) }
         guard bytes[cursor] == 0xff else { return false }
         cursor += 1

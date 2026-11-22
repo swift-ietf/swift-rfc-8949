@@ -1,4 +1,4 @@
-extension RFC_8949 {
+extension IETF.RFC.`8949` {
 
     /// One key and value of a map.
     public struct Pair: Sendable, Hashable {

@@ -1,4 +1,4 @@
-extension RFC_8949 {
+extension IETF.RFC.`8949` {
 
     /// One CBOR data item (section 3), with indefinite-length strings, arrays and maps already joined.
     ///
@@ -45,7 +45,7 @@ extension RFC_8949 {
     }
 }
 
-extension RFC_8949.Value {
+extension IETF.RFC.`8949`.Value {
 
     /// The integer `value`, in major type 0 or 1.
     public init(_ value: Int64) {
@@ -74,24 +74,24 @@ extension RFC_8949.Value {
     }
 
     /// The items of an array.
-    public var array: [RFC_8949.Value]? {
+    public var array: [IETF.RFC.`8949`.Value]? {
         guard case .array(let items) = self else { return nil }
         return items
     }
 
     /// The pairs of a map.
-    public var map: [RFC_8949.Pair]? {
+    public var map: [IETF.RFC.`8949`.Pair]? {
         guard case .map(let pairs) = self else { return nil }
         return pairs
     }
 
     /// The value of the first pair in a map whose key is `key`.
-    public subscript(key: RFC_8949.Value) -> RFC_8949.Value? {
+    public subscript(key: IETF.RFC.`8949`.Value) -> IETF.RFC.`8949`.Value? {
         map?.first { $0.key == key }?.value
     }
 }
 
-extension RFC_8949.Value: Equatable {
+extension IETF.RFC.`8949`.Value: Equatable {
 
     /// Items are equal when they are the same kind with equal contents. Floats are equal when their bits are, so
     /// 0.0 and -0.0 differ and a NaN equals itself.
@@ -113,7 +113,7 @@ extension RFC_8949.Value: Equatable {
     }
 }
 
-extension RFC_8949.Value: Hashable {
+extension IETF.RFC.`8949`.Value: Hashable {
 
     public func hash(into hasher: inout Hasher) {
         switch self {
@@ -154,29 +154,29 @@ extension RFC_8949.Value: Hashable {
     }
 }
 
-extension RFC_8949.Value: ExpressibleByIntegerLiteral {
+extension IETF.RFC.`8949`.Value: ExpressibleByIntegerLiteral {
     public init(integerLiteral value: Int64) { self.init(value) }
 }
 
-extension RFC_8949.Value: ExpressibleByStringLiteral {
+extension IETF.RFC.`8949`.Value: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) { self = .text(value) }
 }
 
-extension RFC_8949.Value: ExpressibleByBooleanLiteral {
+extension IETF.RFC.`8949`.Value: ExpressibleByBooleanLiteral {
     public init(booleanLiteral value: Bool) { self = .bool(value) }
 }
 
-extension RFC_8949.Value: ExpressibleByFloatLiteral {
+extension IETF.RFC.`8949`.Value: ExpressibleByFloatLiteral {
     public init(floatLiteral value: Double) { self = .float(value) }
 }
 
-extension RFC_8949.Value: ExpressibleByArrayLiteral {
-    public init(arrayLiteral elements: RFC_8949.Value...) { self = .array(elements) }
+extension IETF.RFC.`8949`.Value: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: IETF.RFC.`8949`.Value...) { self = .array(elements) }
 }
 
-extension RFC_8949.Value: ExpressibleByDictionaryLiteral {
+extension IETF.RFC.`8949`.Value: ExpressibleByDictionaryLiteral {
     /// A map with the pairs in the order written.
-    public init(dictionaryLiteral elements: (RFC_8949.Value, RFC_8949.Value)...) {
-        self = .map(elements.map { RFC_8949.Pair(key: $0.0, value: $0.1) })
+    public init(dictionaryLiteral elements: (IETF.RFC.`8949`.Value, IETF.RFC.`8949`.Value)...) {
+        self = .map(elements.map { IETF.RFC.`8949`.Pair(key: $0.0, value: $0.1) })
     }
 }

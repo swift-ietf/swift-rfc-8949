@@ -1,10 +1,10 @@
-extension RFC_8949 {
+extension IETF.RFC.`8949` {
 
     /// IEEE 754 half precision, converted by hand so that it works where `Float16` is unavailable (Appendix D).
     enum Half {}
 }
 
-extension RFC_8949.Half {
+extension IETF.RFC.`8949`.Half {
 
     /// The value of the half-precision bits `half`.
     static func double(_ half: UInt16) -> Double {

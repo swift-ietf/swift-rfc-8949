@@ -1,4 +1,4 @@
-extension RFC_8949 {
+extension IETF.RFC.`8949` {
 
     /// How an item is written.
     public enum Serialization: Sendable, Hashable {
@@ -14,7 +14,7 @@ extension RFC_8949 {
     }
 }
 
-extension RFC_8949 {
+extension IETF.RFC.`8949` {
 
     /// The encoding of `value`.
     public static func encode(_ value: Value, serialization: Serialization = .preferred) -> [UInt8] {

@@ -23,23 +23,23 @@ struct `Fuzz Tests` {
     func `random bytes are decoded or refused, never crash`() {
         var random = Fuzzing(state: 0x5eed)
         for _ in 0..<50_000 {
-            _ = try? RFC_8949.decode(random.bytes(upTo: 64))
+            _ = try? IETF.RFC.`8949`.decode(random.bytes(upTo: 64))
         }
     }
 
     @Test
     func `nesting past the limit is refused, not followed`() {
         let deep = [UInt8](repeating: 0x81, count: 100_000) + [0x00]
-        #expect(throws: RFC_8949.Error.self) { try RFC_8949.decode(deep) }
+        #expect(throws: IETF.RFC.`8949`.Error.self) { try IETF.RFC.`8949`.decode(deep) }
         let tags = [UInt8](repeating: 0xc6, count: 100_000) + [0x00]
-        #expect(throws: RFC_8949.Error.self) { try RFC_8949.decode(tags) }
+        #expect(throws: IETF.RFC.`8949`.Error.self) { try IETF.RFC.`8949`.decode(tags) }
     }
 
     @Test
     func `a length larger than the input is refused without reserving it`() {
         for head: UInt8 in [0x5b, 0x7b, 0x9b, 0xbb] {
-            #expect(throws: RFC_8949.Error.self) { try RFC_8949.decode([head, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]) }
-            #expect(throws: RFC_8949.Error.self) { try RFC_8949.decode([head, 0x00, 0x00, 0x00, 0x00, 0x7f, 0xff, 0xff, 0xff, 0x01]) }
+            #expect(throws: IETF.RFC.`8949`.Error.self) { try IETF.RFC.`8949`.decode([head, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]) }
+            #expect(throws: IETF.RFC.`8949`.Error.self) { try IETF.RFC.`8949`.decode([head, 0x00, 0x00, 0x00, 0x00, 0x7f, 0xff, 0xff, 0xff, 0x01]) }
         }
     }
 }
